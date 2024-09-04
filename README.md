@@ -32,7 +32,7 @@ export AWS_SECRET_ACCESS_KEY='your-secret-access-key'
 ```
 ### Configuration
 ```
-Edit config/config.yaml to configure collectors and Prometheus settings:
+#Edit config/config.yaml to configure collectors and Prometheus settings:
 collectors:
   iam: true
   rds: true
