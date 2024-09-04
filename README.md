@@ -40,7 +40,7 @@ collectors:
   elasticache: true
 
 settings:
-  prometheus_port: 8000
+  prometheus_port: 9090
   regions:
     - us-east-1
     - us-west-2
