@@ -62,6 +62,6 @@ def collect_reserved_instance_metrics(region='us-east-1'):
         print(f"Error fetching Reserved Instance metrics: {e}")
 
 # Call both metric collectors
-def collect_all_metrics(region='us-east-1'):
+def collect_all_ec2_metrics(region='us-east-1'):
     collect_ec2_metrics(region)
     collect_reserved_instance_metrics(region)

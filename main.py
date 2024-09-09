@@ -15,7 +15,7 @@ def collect_metrics():
         if config['collectors'].get('rds', False):
             collect_rds_metrics(region)
         if config['collectors'].get('ec2', False):
-            collect_ec2_metrics(region)
+            collect_all_ec2_metrics(region)
         if config['collectors'].get('elasticache', False):
             collect_elasticache_metrics(region)
 
