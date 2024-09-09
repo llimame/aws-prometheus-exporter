@@ -4,7 +4,7 @@ from exporters.iam_exporter import collect_iam_metrics
 from exporters.rds_exporter import collect_rds_metrics
 from exporters.ec2_exporter import collect_all_ec2_metrics
 from exporters.elasticache_exporter import collect_elasticache_metrics
-from config.config import config, PROMETHEUS_PORT
+from config.config import config, PROMETHEUS_PORT, SCRAP_INTERVAL
 
 from config.config import config, PROMETHEUS_PORT, REGIONS
 
@@ -25,4 +25,4 @@ if __name__ == "__main__":
 
     while True:
         collect_metrics()
-        time.sleep(3600)
+        time.sleep(SCRAP_INTERVAL)

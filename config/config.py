@@ -8,8 +8,10 @@ def load_config():
 config = load_config()
 
 # Access the settings like this
+SCRAP_INTERVAL = config['settings']['scrap_interval']
 PROMETHEUS_PORT = config['settings']['prometheus_port']
 REGIONS = config['settings']['regions']
+
 
 # Acessa as credenciais da AWS a partir das variáveis de ambiente
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')

@@ -6,6 +6,7 @@ collectors:
 
 settings:
   prometheus_port: 9090
+  scrap_interval: 360 #seconds
   regions:
     - us-east-1
     - us-west-2
