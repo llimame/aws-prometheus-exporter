@@ -2,7 +2,7 @@ from prometheus_client import start_http_server
 import time
 from exporters.iam_exporter import collect_iam_metrics
 from exporters.rds_exporter import collect_rds_metrics
-from exporters.ec2_exporter import collect_ec2_metrics
+from exporters.ec2_exporter import collect_all_ec2_metrics
 from exporters.elasticache_exporter import collect_elasticache_metrics
 from config.config import config, PROMETHEUS_PORT
 
