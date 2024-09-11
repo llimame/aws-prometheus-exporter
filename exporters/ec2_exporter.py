@@ -5,7 +5,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 
 # Prometheus Gauges for EC2 Instances
 ec2_instances_gauge = Gauge('aws_ec2_instances_total', 'Total number of EC2 instances', ['account_id', 'region'])
-ec2_instance_types_gauge = Gauge('aws_ec2_instance_types', 'Number of EC2 instances by type and lifecycle', ['account_id', 'region', 'instance_type', 'lifecycle'])
+ec2_instance_types_gauge = Gauge('aws_ec2_instance_types', 'Number of EC2 instances by type, lifecycle, and state', ['account_id', 'region', 'instance_type', 'lifecycle', 'state'])
 
 # New Gauge for Reserved Instances
 reserved_instances_gauge = Gauge('aws_ec2_reserved_instances_total', 'Total number of Reserved EC2 Instances', ['account_id', 'region'])
@@ -28,19 +28,27 @@ def collect_ec2_metrics(region='us-east-1'):
                 for instance in reservation['Instances']:
                     instance_type = instance['InstanceType']
                     lifecycle = instance.get('InstanceLifecycle', 'normal')  # 'spot' if spot instance, else 'normal'
+                    state = instance['State']['Name']  # E.g., 'running', 'stopped'
 
                     # Initialize the dictionary if it doesn't exist
                     if instance_type not in instance_type_count:
-                        instance_type_count[instance_type] = {'spot': 0, 'normal': 0}
-                    
-                    # Count based on lifecycle
-                    instance_type_count[instance_type][lifecycle] += 1
+                        instance_type_count[instance_type] = {}
+
+                    if lifecycle not in instance_type_count[instance_type]:
+                        instance_type_count[instance_type][lifecycle] = {}
+
+                    if state not in instance_type_count[instance_type][lifecycle]:
+                        instance_type_count[instance_type][lifecycle][state] = 0
+
+                    # Count instances based on type, lifecycle, and state
+                    instance_type_count[instance_type][lifecycle][state] += 1
 
         # Update Prometheus Gauges for EC2 instances
         ec2_instances_gauge.labels(account_id=ACCOUNT_ID, region=region).set(total_instances)
-        for instance_type, counts in instance_type_count.items():
-            for lifecycle, count in counts.items():
-                ec2_instance_types_gauge.labels(account_id=ACCOUNT_ID, region=region, instance_type=instance_type, lifecycle=lifecycle).set(count)
+        for instance_type, lifecycles in instance_type_count.items():
+            for lifecycle, states in lifecycles.items():
+                for state, count in states.items():
+                    ec2_instance_types_gauge.labels(account_id=ACCOUNT_ID, region=region, instance_type=instance_type, lifecycle=lifecycle, state=state).set(count)
 
     except (BotoCoreError, ClientError) as e:
         print(f"Error fetching EC2 metrics: {e}")
