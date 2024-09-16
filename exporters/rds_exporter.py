@@ -37,12 +37,12 @@ def collect_reserved_rds_instance_metrics(region='us-east-1'):
     rds_client = boto3.client('rds', region_name=region)
 
     try:
-        # Fetch reserved RDS instances
-        reserved_instances = rds_client.describe_reserved_db_instances(Filters=[{'Name': 'State', 'Values': ['active']}])['ReservedDBInstances']
-        total_reserved_instances = len(reserved_instances)
+        # Fetch all reserved RDS instances
+        reserved_instances = rds_client.describe_reserved_db_instances()['ReservedDBInstances']
+        total_reserved_instances = 0
         reserved_instance_type_count = {}
 
-        # Collect reserved RDS instance data by type and lifecycle
+        # Process the reserved instances and count them by instance type
         for reserved_instance in reserved_instances:
             instance_type = reserved_instance['DBInstanceClass']
             lifecycle = 'reserved'  # Reserved instances lifecycle
@@ -50,6 +50,7 @@ def collect_reserved_rds_instance_metrics(region='us-east-1'):
             if instance_type not in reserved_instance_type_count:
                 reserved_instance_type_count[instance_type] = 0
             reserved_instance_type_count[instance_type] += reserved_instance['DBInstanceCount']
+            total_reserved_instances += reserved_instance['DBInstanceCount']
 
         # Update Prometheus Gauges for reserved RDS instances
         reserved_rds_instances_gauge.labels(account_id=ACCOUNT_ID, region=region).set(total_reserved_instances)
@@ -58,6 +59,7 @@ def collect_reserved_rds_instance_metrics(region='us-east-1'):
 
     except (BotoCoreError, ClientError) as e:
         print(f"Error fetching Reserved RDS Instance metrics: {e}")
+
 
 
 # Function to collect all RDS metrics
