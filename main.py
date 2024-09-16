@@ -1,7 +1,7 @@
 from prometheus_client import start_http_server
 import time
 from exporters.iam_exporter import collect_iam_metrics
-from exporters.rds_exporter import collect_rds_metrics
+from exporters.rds_exporter import collect_all_rds_metrics
 from exporters.ec2_exporter import collect_all_ec2_metrics
 from exporters.elasticache_exporter import collect_elasticache_metrics
 from config.config import config, PROMETHEUS_PORT, SCRAP_INTERVAL
@@ -13,7 +13,7 @@ def collect_metrics():
         if config['collectors'].get('iam', False):
             collect_iam_metrics()
         if config['collectors'].get('rds', False):
-            collect_rds_metrics(region)
+            collect_all_rds_metrics(region)
         if config['collectors'].get('ec2', False):
             collect_all_ec2_metrics(region)
         if config['collectors'].get('elasticache', False):
