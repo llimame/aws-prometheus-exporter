@@ -28,13 +28,14 @@ def collect_elasticache_metrics(region='us-east-1'):
     # Get reserved instance information
     reserved_nodes = elasticache_client.describe_reserved_cache_nodes()['ReservedCacheNodes']
 
-    # Count reserved instances by instance type
+    # Count only active reserved instances by instance type
     reserved_node_type_count = {}
     for node in reserved_nodes:
-        instance_type = node['CacheNodeType']
-        if instance_type not in reserved_node_type_count:
-            reserved_node_type_count[instance_type] = 0
-        reserved_node_type_count[instance_type] += 1
+        if node['State'] == 'active':  # Only count if the status is 'active'
+            instance_type = node['CacheNodeType']
+            if instance_type not in reserved_node_type_count:
+                reserved_node_type_count[instance_type] = 0
+            reserved_node_type_count[instance_type] += 1
 
     for instance_type, count in reserved_node_type_count.items():
         reserved_cache_node_types_gauge.labels(account_id=ACCOUNT_ID, region=region, instance_type=instance_type).set(count)
