@@ -4,6 +4,9 @@ from exporters.iam_exporter import collect_iam_metrics
 from exporters.rds_exporter import collect_all_rds_metrics
 from exporters.ec2_exporter import collect_all_ec2_metrics
 from exporters.elasticache_exporter import collect_elasticache_metrics
+from exporters.aws_backup_exporter import collect_backup_metrics
+#from exporters.aws_backup_exporter import 
+
 from config.config import config, PROMETHEUS_PORT, SCRAP_INTERVAL
 
 from config.config import config, PROMETHEUS_PORT, REGIONS
@@ -18,6 +21,8 @@ def collect_metrics():
             collect_all_ec2_metrics(region)
         if config['collectors'].get('elasticache', False):
             collect_elasticache_metrics(region)
+        if config['collectors'].get('aws-backup', False):
+            collect_backup_metrics(region)
 
 if __name__ == "__main__":
     start_http_server(PROMETHEUS_PORT)

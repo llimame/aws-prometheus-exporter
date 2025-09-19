@@ -3,7 +3,8 @@ collectors:
   rds: true
   ec2: true
   elasticache: true
-
+  aws-backup: true
+  
 settings:
   prometheus_port: 9090
   scrap_interval: 360 #seconds
